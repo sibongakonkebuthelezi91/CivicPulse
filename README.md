@@ -4,6 +4,63 @@ An action-oriented technical architecture, free-tier toolstack, and 24-hour exec
 
 ---
 
+## Getting Started
+
+### Prerequisites
+
+- [Flutter SDK](https://flutter.dev/docs/get-started/install) (stable channel, v3.x+)
+- [Dart SDK](https://dart.dev/get-dart) (included with Flutter)
+- A modern web browser (Chrome or Edge recommended)
+
+### Running the App
+
+#### Web (Recommended for quick preview)
+
+```bash
+# 1. Install dependencies
+flutter pub get
+
+# 2. Run in debug mode (hot reload enabled)
+flutter run -d chrome
+
+# 3. Or run as a local web server on port 9090
+flutter run -d web-server --web-port 9090 --web-hostname 127.0.0.1
+# Then open http://127.0.0.1:9090 in your browser
+
+# 4. Run in release mode (optimised, faster load)
+flutter run -d web-server --release --web-port 9090 --web-hostname 127.0.0.1 --no-web-resources-cdn
+```
+
+#### Mobile (Android / iOS)
+
+```bash
+# List available devices
+flutter devices
+
+# Run on a connected device or emulator
+flutter run -d <device-id>
+```
+
+#### Backend (FastAPI)
+
+```bash
+# Navigate to the backend directory
+cd backend
+
+# Create a virtual environment and install dependencies
+python -m venv venv
+venv\Scripts\activate          # Windows
+# source venv/bin/activate     # macOS / Linux
+
+pip install -r requirements.txt
+
+# Start the API server
+uvicorn main:app --reload --port 8000
+# API docs available at http://127.0.0.1:8000/docs
+```
+
+---
+
 ## Technical Stack (100% Free Tiers)
 
 To ensure delivery within 24 hours with zero upfront costs, we leverage reliable free-tier services and open-source libraries.
