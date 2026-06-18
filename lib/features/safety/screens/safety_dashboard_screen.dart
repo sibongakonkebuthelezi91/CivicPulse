@@ -22,14 +22,37 @@ class _SafetyDashboardScreenState extends State<SafetyDashboardScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.of(context).pop(),
+        automaticallyImplyLeading: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              'GBV Safe Hub',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                letterSpacing: -0.5,
+              ),
+            ),
+            Text(
+              'Your safety, our priority.',
+              style: TextStyle(color: Color(0xFFF9A8D4), fontSize: 12),
+            ),
+          ],
         ),
-        title: const Text(
-          'GBV & Safety Hub',
-          style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
-        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white12),
+            ),
+            child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 22),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
