@@ -61,6 +61,20 @@ class _HourRating {
 class JourneyScreen extends StatefulWidget {
   const JourneyScreen({super.key});
 
+  static void launchJourneyWithGuardian({
+    required String start,
+    required String destination,
+    required String name,
+    required String phone,
+  }) {
+    _JourneyScreenState.activeState?.startJourneyWithGuardian(
+      startLocation: start,
+      destination: destination,
+      guardianName: name,
+      guardianPhone: phone,
+    );
+  }
+
   @override
   State<JourneyScreen> createState() => _JourneyScreenState();
 }
@@ -68,6 +82,13 @@ class JourneyScreen extends StatefulWidget {
 class _JourneyScreenState extends State<JourneyScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
+  static _JourneyScreenState? activeState;
+
+  // Guardian Angel state
+  String? _activeGuardianName;
+  String? _activeGuardianPhone;
+  bool _isGuardianAngelJourney = false;
 
   // ── Journey tracking state ──
   JourneyStatus _status = JourneyStatus.setup;
@@ -121,17 +142,37 @@ class _JourneyScreenState extends State<JourneyScreen>
   @override
   void initState() {
     super.initState();
+    activeState = this;
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
+    if (activeState == this) {
+      activeState = null;
+    }
     _timer?.cancel();
     _tabController.dispose();
     _startController.dispose();
     _destController.dispose();
     super.dispose();
+  }
+
+  void startJourneyWithGuardian({
+    required String startLocation,
+    required String destination,
+    required String guardianName,
+    required String guardianPhone,
+  }) {
+    setState(() {
+      _startController.text = startLocation;
+      _destController.text = destination;
+      _activeGuardianName = guardianName;
+      _activeGuardianPhone = guardianPhone;
+      _isGuardianAngelJourney = true;
+    });
+    _startJourney();
   }
 
   // ─── Journey logic ────────────────────────────────────────────────────────
@@ -163,7 +204,9 @@ class _JourneyScreenState extends State<JourneyScreen>
     if (_secondsToNextCheckpoint <= 0 && !_missedWarningShown) {
       setState(() => _missedWarningShown = true);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('⚠️ Checkpoint overdue! Check in or guardians will be alerted.'),
+        content: Text(_isGuardianAngelJourney
+            ? '⚠️ Checkpoint overdue! Check in or $_activeGuardianName will be alerted.'
+            : '⚠️ Checkpoint overdue! Check in or guardians will be alerted.'),
         backgroundColor: AppColors.urgent,
         duration: const Duration(seconds: 5),
         action: SnackBarAction(label: 'Check In', textColor: Colors.white, onPressed: _checkIn),
@@ -180,10 +223,12 @@ class _JourneyScreenState extends State<JourneyScreen>
             _missedWarningShown = false;
           }
         });
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('🚨 Checkpoint missed! Guardians automatically alerted.'),
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(_isGuardianAngelJourney
+              ? '🚨 Checkpoint missed! Guardian Angel $_activeGuardianName automatically alerted.'
+              : '🚨 Checkpoint missed! Guardians automatically alerted.'),
           backgroundColor: AppColors.critical,
-          duration: Duration(seconds: 6),
+          duration: const Duration(seconds: 6),
         ));
       }
     }
@@ -200,10 +245,12 @@ class _JourneyScreenState extends State<JourneyScreen>
         _secondsToNextCheckpoint = _checkpointIntervalMinutes * 60 ~/ _simSpeed;
       }
     });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('✅ Checked in! Guardians notified you are safe.'),
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(_isGuardianAngelJourney
+          ? '✅ Checked in! Guardian Angel $_activeGuardianName notified you are safe.'
+          : '✅ Checked in! Guardians notified you are safe.'),
       backgroundColor: AppColors.surface,
-      duration: Duration(seconds: 2),
+      duration: const Duration(seconds: 2),
     ));
   }
 
@@ -227,10 +274,12 @@ class _JourneyScreenState extends State<JourneyScreen>
         arrivedSafely: true,
       ));
     });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('🏠 Arrived safely! All guardians have been notified.'),
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(_isGuardianAngelJourney
+          ? '🏠 Arrived safely! Guardian Angel $_activeGuardianName has been notified.'
+          : '🏠 Arrived safely! All guardians have been notified.'),
       backgroundColor: Colors.green,
-      duration: Duration(seconds: 5),
+      duration: const Duration(seconds: 5),
     ));
   }
 
@@ -242,6 +291,9 @@ class _JourneyScreenState extends State<JourneyScreen>
       _currentCheckpointIndex = 0;
       _secondsToNextCheckpoint = 0;
       _missedWarningShown = false;
+      _isGuardianAngelJourney = false;
+      _activeGuardianName = null;
+      _activeGuardianPhone = null;
     });
   }
 
@@ -650,6 +702,47 @@ class _JourneyScreenState extends State<JourneyScreen>
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
+          if (_isGuardianAngelJourney) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEC4899).withOpacity(0.12),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFEC4899).withOpacity(0.4)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.shield_outlined, color: Color(0xFFEC4899), size: 22),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '🛡️ Guardian Angel Active',
+                          style: TextStyle(
+                            color: Color(0xFFEC4899),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '$_activeGuardianName is monitoring your journey live. SMS warnings will auto-send to $_activeGuardianPhone.',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 11,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           // Route header
           Container(
             padding: const EdgeInsets.all(16),
@@ -813,7 +906,9 @@ class _JourneyScreenState extends State<JourneyScreen>
               case CheckpointStatus.missed:
                 dotColor = AppColors.critical;
                 dotIcon = Icons.cancel;
-                statusText = 'Missed — guardians alerted';
+                statusText = _isGuardianAngelJourney
+                    ? 'Missed — Guardian $_activeGuardianName alerted'
+                    : 'Missed — guardians alerted';
                 break;
               case CheckpointStatus.upcoming:
                 dotColor = i == _currentCheckpointIndex ? AppColors.primary : Colors.white24;
@@ -903,7 +998,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                   children: [
                     _statBadge('$completed/$total', 'Checkpoints', Colors.green),
                     _statBadge('$safetyScore%', 'Safety\nScore', safetyScore >= 80 ? Colors.green : AppColors.urgent),
-                    _statBadge('3', 'Guardians\nNotified', AppColors.primary),
+                    _statBadge(_isGuardianAngelJourney ? '1' : '3', _isGuardianAngelJourney ? 'Guardian\nNotified' : 'Guardians\nNotified', AppColors.primary),
                   ],
                 ),
                 const SizedBox(height: 20),
