@@ -52,10 +52,14 @@ python -m venv venv
 venv\Scripts\activate          # Windows
 # source venv/bin/activate     # macOS / Linux
 
+# Copy and configure environment variables
+cp .env.example .env
+# Edit backend/.env and paste your SUPABASE_URL and SUPABASE_KEY
+
 pip install -r requirements.txt
 
 # Start the API server
-uvicorn main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8000
 # API docs available at http://127.0.0.1:8000/docs
 ```
 
