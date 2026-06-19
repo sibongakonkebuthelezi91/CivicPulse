@@ -239,12 +239,12 @@ class _LoginScreenState extends State<LoginScreen>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEC4899).withValues(alpha: 0.15),
+                  color: AppColors.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.lock_outline,
-                  color: Color(0xFFEC4899),
+                  color: AppColors.primary,
                   size: 22,
                 ),
               ),
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen>
                 setState(() {});
               },
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFEC4899),
+                foregroundColor: AppColors.primary,
               ),
               child: Text(
                 'Understood',
@@ -596,7 +596,7 @@ class _LoginScreenState extends State<LoginScreen>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFF14B8A6), width: 1.4),
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -624,13 +624,13 @@ class _AuthHeader extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               gradient: const LinearGradient(
-                colors: [Color(0xFFEC4899), Color(0xFF14B8A6)],
+                colors: [AppColors.primary, AppColors.primary],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF14B8A6).withValues(alpha: 0.26),
+                  color: AppColors.primary.withValues(alpha: 0.26),
                   blurRadius: 22,
                   offset: const Offset(0, 8),
                 ),
@@ -655,7 +655,7 @@ class _AuthHeader extends StatelessWidget {
           Text(
             'A safer space for women and girls',
             style: GoogleFonts.outfit(
-              color: const Color(0xFF5EEAD4),
+              color: AppColors.secondary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
@@ -696,7 +696,7 @@ class _ModeSwitch extends StatelessWidget {
         }),
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const Color(0xFF14B8A6).withValues(alpha: 0.24);
+            return AppColors.primary.withValues(alpha: 0.24);
           }
           return AppColors.surface.withValues(alpha: 0.72);
         }),
@@ -720,14 +720,14 @@ class _NoticeBanner extends StatelessWidget {
         color: AppColors.surface.withValues(alpha: 0.78),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: const Color(0xFF14B8A6).withValues(alpha: 0.28),
+          color: AppColors.primary.withValues(alpha: 0.28),
         ),
       ),
       child: Row(
         children: [
           const Icon(
             Icons.verified_user_outlined,
-            color: Color(0xFF5EEAD4),
+            color: AppColors.secondary,
             size: 18,
           ),
           const SizedBox(width: 10),
@@ -792,14 +792,14 @@ class _AuthButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFEC4899), Color(0xFF14B8A6)],
+          colors: [AppColors.primary, AppColors.primary],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF14B8A6).withValues(alpha: 0.28),
+            color: AppColors.primary.withValues(alpha: 0.28),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),

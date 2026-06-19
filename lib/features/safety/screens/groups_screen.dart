@@ -165,15 +165,15 @@ class _GroupsScreenState extends State<GroupsScreen>
             ),
             Text(
               'Walk and travel together, stay safe.',
-              style: TextStyle(color: Color(0xFFF9A8D4), fontSize: 12),
+              style: TextStyle(color: AppColors.accent, fontSize: 12),
             ),
           ],
         ),
         bottom: TabBar(
           controller: _tabController,
-          labelColor: const Color(0xFFEC4899),
+          labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textMuted,
-          indicatorColor: const Color(0xFFEC4899),
+          indicatorColor: AppColors.primary,
           indicatorWeight: 2,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
@@ -192,7 +192,7 @@ class _GroupsScreenState extends State<GroupsScreen>
       floatingActionButton: _tabController.index == 0
           ? FloatingActionButton.extended(
               onPressed: _showCreateGroupDialog,
-              backgroundColor: const Color(0xFFEC4899),
+              backgroundColor: AppColors.primary,
               icon: const Icon(Icons.add, color: Colors.white),
               label: const Text('New Group',
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -279,7 +279,7 @@ class _GroupsScreenState extends State<GroupsScreen>
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: selected ? const Color(0xFFEC4899) : Colors.transparent,
+            color: selected ? AppColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -317,7 +317,7 @@ class _GroupsScreenState extends State<GroupsScreen>
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: joined ? const Color(0xFFEC4899).withValues(alpha: 0.4) : Colors.white10,
+          color: joined ? AppColors.primary.withValues(alpha: 0.4) : Colors.white10,
           width: joined ? 1.5 : 1,
         ),
       ),
@@ -362,11 +362,11 @@ class _GroupsScreenState extends State<GroupsScreen>
                       const SizedBox(height: 3),
                       Row(
                         children: [
-                          const Icon(Icons.access_time, size: 12, color: Color(0xFFF9A8D4)),
+                          const Icon(Icons.access_time, size: 12, color: AppColors.accent),
                           const SizedBox(width: 4),
                           Text(
                             'Departs ${group.departureTime}',
-                            style: const TextStyle(color: Color(0xFFF9A8D4), fontSize: 11, fontWeight: FontWeight.w600),
+                            style: const TextStyle(color: AppColors.accent, fontSize: 11, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -423,9 +423,9 @@ class _GroupsScreenState extends State<GroupsScreen>
                   height: 34,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: joined ? Colors.transparent : const Color(0xFFEC4899),
+                      backgroundColor: joined ? Colors.transparent : AppColors.primary,
                       foregroundColor: Colors.white,
-                      side: joined ? const BorderSide(color: Color(0xFFEC4899)) : BorderSide.none,
+                      side: joined ? const BorderSide(color: AppColors.primary) : BorderSide.none,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       padding: const EdgeInsets.symmetric(horizontal: 18),
                       elevation: 0,
@@ -471,7 +471,7 @@ class _GroupsScreenState extends State<GroupsScreen>
           const SizedBox(height: 8),
           TextButton(
             onPressed: _showCreateGroupDialog,
-            child: const Text('+ Create the first one', style: TextStyle(color: Color(0xFFEC4899))),
+            child: const Text('+ Create the first one', style: TextStyle(color: AppColors.primary)),
           ),
         ],
       ),
@@ -520,7 +520,7 @@ class _GroupsScreenState extends State<GroupsScreen>
         children: [
           const Row(
             children: [
-              Icon(Icons.search, color: Color(0xFFEC4899), size: 20),
+              Icon(Icons.search, color: AppColors.primary, size: 20),
               SizedBox(width: 8),
               Text(
                 'Find Your Taxi Group',
@@ -546,7 +546,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              prefixIcon: const Icon(Icons.location_on, color: Color(0xFFEC4899)),
+              prefixIcon: const Icon(Icons.location_on, color: AppColors.primary),
               suffixIcon: _destinationController.text.isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.clear, color: AppColors.textMuted, size: 18),
@@ -567,7 +567,7 @@ class _GroupsScreenState extends State<GroupsScreen>
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEC4899),
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 0,
@@ -594,7 +594,7 @@ class _GroupsScreenState extends State<GroupsScreen>
             height: 48,
             width: 48,
             child: CircularProgressIndicator(
-              color: Color(0xFFEC4899),
+              color: AppColors.primary,
               strokeWidth: 3,
             ),
           ),
@@ -684,7 +684,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                         CircleAvatar(
                           radius: 13,
                           backgroundColor: idx == 0
-                              ? const Color(0xFFEC4899)
+                              ? AppColors.primary
                               : AppColors.primary.withValues(alpha: 0.7),
                           child: Text(
                             '${idx + 1}',
@@ -729,7 +729,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                                 padding: EdgeInsets.only(top: 3),
                                 child: Text(
                                   '🛡️ Furthest — dropped first for group safety',
-                                  style: TextStyle(color: Color(0xFFEC4899), fontSize: 10, fontWeight: FontWeight.w600),
+                                  style: TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.w600),
                                 ),
                               ),
                             if (isLast)
@@ -757,7 +757,7 @@ class _GroupsScreenState extends State<GroupsScreen>
             Expanded(
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEC4899),
+                  backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   elevation: 0,
@@ -829,7 +829,7 @@ class _GroupsScreenState extends State<GroupsScreen>
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEC4899),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -876,8 +876,8 @@ class _GroupsScreenState extends State<GroupsScreen>
         children: [
           CircleAvatar(
             radius: 11,
-            backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.2),
-            child: Text(num, style: const TextStyle(color: Color(0xFFEC4899), fontSize: 10, fontWeight: FontWeight.bold)),
+            backgroundColor: AppColors.primary.withValues(alpha: 0.2),
+            child: Text(num, style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(width: 10),
           Icon(icon, color: AppColors.textSecondary, size: 16),
@@ -935,7 +935,7 @@ class _GroupsScreenState extends State<GroupsScreen>
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Row(
             children: [
-              Icon(Icons.group_add, color: Color(0xFFEC4899), size: 22),
+              Icon(Icons.group_add, color: AppColors.primary, size: 22),
               SizedBox(width: 10),
               Text('Create Walking Group', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
             ],
@@ -956,7 +956,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                     filled: true,
                     fillColor: AppColors.background,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                    prefixIcon: const Icon(Icons.my_location, color: Color(0xFFEC4899), size: 18),
+                    prefixIcon: const Icon(Icons.my_location, color: AppColors.primary, size: 18),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -971,7 +971,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                     filled: true,
                     fillColor: AppColors.background,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-                    prefixIcon: const Icon(Icons.location_on, color: Color(0xFFEC4899), size: 18),
+                    prefixIcon: const Icon(Icons.location_on, color: AppColors.primary, size: 18),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -1048,7 +1048,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                     decoration: BoxDecoration(color: AppColors.background, borderRadius: BorderRadius.circular(10)),
                     child: Row(
                       children: [
-                        const Icon(Icons.access_time, color: Color(0xFFEC4899), size: 18),
+                        const Icon(Icons.access_time, color: AppColors.primary, size: 18),
                         const SizedBox(width: 10),
                         Text(selectedTime.format(ctx),
                             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
@@ -1068,7 +1068,7 @@ class _GroupsScreenState extends State<GroupsScreen>
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEC4899),
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () {
@@ -1109,7 +1109,7 @@ class _GroupsScreenState extends State<GroupsScreen>
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFEC4899).withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1119,10 +1119,10 @@ class _GroupsScreenState extends State<GroupsScreen>
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEC4899).withValues(alpha: 0.12),
+                  color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.shield, color: Color(0xFFEC4899), size: 16),
+                child: const Icon(Icons.shield, color: AppColors.primary, size: 16),
               ),
               const SizedBox(width: 10),
               const Text(
@@ -1142,17 +1142,17 @@ class _GroupsScreenState extends State<GroupsScreen>
             height: 36,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.15),
-                foregroundColor: const Color(0xFFEC4899),
-                side: const BorderSide(color: Color(0xFFEC4899)),
+                backgroundColor: AppColors.primary.withValues(alpha: 0.15),
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
               onPressed: () => _initiateGuardianAngelFlow(defaultRoute: 'Walking Route'),
-              icon: const Icon(Icons.share_location, size: 14, color: Color(0xFFEC4899)),
+              icon: const Icon(Icons.share_location, size: 14, color: AppColors.primary),
               label: const Text(
                 'Activate Guardian Angel & Depart',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFFEC4899)),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.primary),
               ),
             ),
           ),
@@ -1192,7 +1192,7 @@ class _GroupsScreenState extends State<GroupsScreen>
               const SizedBox(height: 18),
               const Row(
                 children: [
-                  Icon(Icons.shield, color: Color(0xFFEC4899), size: 22),
+                  Icon(Icons.shield, color: AppColors.primary, size: 22),
                   SizedBox(width: 10),
                   Text(
                     'Designate Guardian Angel',
@@ -1217,10 +1217,10 @@ class _GroupsScreenState extends State<GroupsScreen>
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFFEC4899).withValues(alpha: 0.08) : AppColors.background,
+                    color: selected ? AppColors.primary.withValues(alpha: 0.08) : AppColors.background,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: selected ? const Color(0xFFEC4899) : Colors.white10,
+                      color: selected ? AppColors.primary : Colors.white10,
                       width: selected ? 1.5 : 1,
                     ),
                   ),
@@ -1230,7 +1230,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                     subtitle: Text(c['phone']!, style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
                     trailing: Icon(
                       selected ? Icons.radio_button_checked : Icons.radio_button_off,
-                      color: selected ? const Color(0xFFEC4899) : AppColors.textMuted,
+                      color: selected ? AppColors.primary : AppColors.textMuted,
                       size: 18,
                     ),
                     onTap: () {
@@ -1248,10 +1248,10 @@ class _GroupsScreenState extends State<GroupsScreen>
               Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
-                  color: isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.08) : AppColors.background,
+                  color: isCustom ? AppColors.primary.withValues(alpha: 0.08) : AppColors.background,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isCustom ? const Color(0xFFEC4899) : Colors.white10,
+                    color: isCustom ? AppColors.primary : Colors.white10,
                     width: isCustom ? 1.5 : 1,
                   ),
                 ),
@@ -1261,7 +1261,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                   subtitle: const Text('Enter another name and phone number', style: TextStyle(color: AppColors.textMuted, fontSize: 11)),
                   trailing: Icon(
                     isCustom ? Icons.radio_button_checked : Icons.radio_button_off,
-                    color: isCustom ? const Color(0xFFEC4899) : AppColors.textMuted,
+                    color: isCustom ? AppColors.primary : AppColors.textMuted,
                     size: 18,
                   ),
                   onTap: () {
@@ -1313,7 +1313,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEC4899),
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
@@ -1424,7 +1424,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                       height: 40,
                       width: 40,
                       child: CircularProgressIndicator(
-                        color: Color(0xFFEC4899),
+                        color: AppColors.primary,
                         strokeWidth: 3,
                       ),
                     ),
@@ -1445,7 +1445,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                     child: LinearProgressIndicator(
                       value: progress,
                       backgroundColor: Colors.white10,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFEC4899)),
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
                       minHeight: 6,
                     ),
                   ),

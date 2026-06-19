@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../services/daily_reminder_service.dart';
 import 'safety_dashboard_screen.dart';
 import 'groups_screen.dart';
 import 'journey_screen.dart';
@@ -36,6 +37,15 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _scheduleMorningReminder();
+  }
+
+  Future<void> _scheduleMorningReminder() async {
+    final now = DateTime.now();
+    // Only fire the reminder if it's morning (5am–10am)
+    if (now.hour >= 5 && now.hour < 10) {
+      await DailyReminderService.scheduleDailyReminder();
+    }
   }
 
   @override
@@ -63,7 +73,7 @@ class _MainShellState extends State<MainShell> {
           onTap: (i) => setState(() => _currentIndex = i),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          selectedItemColor: const Color(0xFFEC4899), // Pink for GBV
+          selectedItemColor: AppColors.primary, // Pink for GBV
           unselectedItemColor: AppColors.textMuted,
           selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
           unselectedLabelStyle: const TextStyle(fontSize: 11),

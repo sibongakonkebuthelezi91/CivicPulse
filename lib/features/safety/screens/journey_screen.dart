@@ -313,7 +313,7 @@ class _JourneyScreenState extends State<JourneyScreen>
             Text('Journey Tracker',
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22, letterSpacing: -0.5)),
             Text('Track, analyse & travel safer.',
-                style: TextStyle(color: Color(0xFFF9A8D4), fontSize: 12)),
+                style: TextStyle(color: AppColors.accent, fontSize: 12)),
           ],
         ),
         actions: [
@@ -329,9 +329,9 @@ class _JourneyScreenState extends State<JourneyScreen>
         bottom: _status == JourneyStatus.setup || _status == JourneyStatus.completed
             ? TabBar(
                 controller: _tabController,
-                labelColor: const Color(0xFFEC4899),
+                labelColor: AppColors.primary,
                 unselectedLabelColor: AppColors.textMuted,
-                indicatorColor: const Color(0xFFEC4899),
+                indicatorColor: AppColors.primary,
                 indicatorWeight: 2,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 tabs: const [
@@ -455,7 +455,7 @@ class _JourneyScreenState extends State<JourneyScreen>
         children: [
           const Row(
             children: [
-              Icon(Icons.route, color: Color(0xFFEC4899), size: 22),
+              Icon(Icons.route, color: AppColors.primary, size: 22),
               SizedBox(width: 8),
               Text('Start a Safe Journey',
                   style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -478,7 +478,7 @@ class _JourneyScreenState extends State<JourneyScreen>
               filled: true,
               fillColor: AppColors.background,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              prefixIcon: const Icon(Icons.my_location, color: Color(0xFFEC4899), size: 18),
+              prefixIcon: const Icon(Icons.my_location, color: AppColors.primary, size: 18),
             ),
           ),
           const SizedBox(height: 12),
@@ -495,7 +495,7 @@ class _JourneyScreenState extends State<JourneyScreen>
               filled: true,
               fillColor: AppColors.background,
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              prefixIcon: const Icon(Icons.location_on, color: Color(0xFFEC4899), size: 18),
+              prefixIcon: const Icon(Icons.location_on, color: AppColors.primary, size: 18),
             ),
           ),
 
@@ -518,9 +518,9 @@ class _JourneyScreenState extends State<JourneyScreen>
                     margin: const EdgeInsets.only(right: 6),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: selected ? const Color(0xFFEC4899) : AppColors.background,
+                      color: selected ? AppColors.primary : AppColors.background,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: selected ? const Color(0xFFEC4899) : Colors.white10),
+                      border: Border.all(color: selected ? AppColors.primary : Colors.white10),
                     ),
                     child: Column(
                       children: [
@@ -580,7 +580,7 @@ class _JourneyScreenState extends State<JourneyScreen>
             width: double.infinity,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEC4899),
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 elevation: 0,
@@ -706,13 +706,13 @@ class _JourneyScreenState extends State<JourneyScreen>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFFEC4899).withValues(alpha: 0.12),
+                color: AppColors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEC4899).withValues(alpha: 0.4)),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.shield_outlined, color: Color(0xFFEC4899), size: 22),
+                  const Icon(Icons.shield_outlined, color: AppColors.primary, size: 22),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -721,7 +721,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                         const Text(
                           '🛡️ Guardian Angel Active',
                           style: TextStyle(
-                            color: Color(0xFFEC4899),
+                            color: AppColors.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -749,15 +749,15 @@ class _JourneyScreenState extends State<JourneyScreen>
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFEC4899).withValues(alpha: 0.3)),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEC4899).withValues(alpha: 0.15), shape: BoxShape.circle),
-                  child: const Icon(Icons.route, color: Color(0xFFEC4899), size: 22),
+                    color: AppColors.primary.withValues(alpha: 0.15), shape: BoxShape.circle),
+                  child: const Icon(Icons.route, color: AppColors.primary, size: 22),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -1016,21 +1016,21 @@ class _JourneyScreenState extends State<JourneyScreen>
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.surface,
-                    side: const BorderSide(color: Color(0xFFEC4899)),
+                    side: const BorderSide(color: AppColors.primary),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     elevation: 0,
                   ),
                   onPressed: () => _tabController.animateTo(1),
-                  icon: const Icon(Icons.bar_chart, color: Color(0xFFEC4899), size: 18),
-                  label: const Text('View Insights', style: TextStyle(color: Color(0xFFEC4899), fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.bar_chart, color: AppColors.primary, size: 18),
+                  label: const Text('View Insights', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFEC4899),
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     elevation: 0,
@@ -1116,7 +1116,7 @@ class _JourneyScreenState extends State<JourneyScreen>
         children: [
           const Row(
             children: [
-              Icon(Icons.analytics_outlined, color: Color(0xFFEC4899), size: 20),
+              Icon(Icons.analytics_outlined, color: AppColors.primary, size: 20),
               SizedBox(width: 8),
               Text('Your Travel Patterns', style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
             ],
@@ -1129,7 +1129,7 @@ class _JourneyScreenState extends State<JourneyScreen>
             children: [
               Expanded(child: _patternStat('$avgDuration min', 'Avg Journey\nDuration', AppColors.primary)),
               Expanded(child: _patternStat('$checkpointRate%', 'Checkpoint\nCompliance', checkpointRate >= 80 ? Colors.green : AppColors.urgent)),
-              Expanded(child: _patternStat('${commonHour.toString().padLeft(2,'0')}:00', 'Most Common\nDeparture', const Color(0xFFEC4899))),
+              Expanded(child: _patternStat('${commonHour.toString().padLeft(2,'0')}:00', 'Most Common\nDeparture', AppColors.primary)),
             ],
           ),
           const SizedBox(height: 16),

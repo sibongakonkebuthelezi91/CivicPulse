@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
+import '../services/alert_service.dart';
 
 class SafetyDashboardScreen extends StatefulWidget {
   const SafetyDashboardScreen({super.key});
@@ -11,11 +12,46 @@ class SafetyDashboardScreen extends StatefulWidget {
 class _SafetyDashboardScreenState extends State<SafetyDashboardScreen> {
   bool _isTrackingEnabled = false;
 
+  // Guardian contacts loaded from local auth — using hardcoded demo contacts
+  final List<Map<String, String>> _guardians = [
+    {'name': 'Mom',          'phone': '+27821234567'},
+    {'name': 'Sister',       'phone': '+27739876543'},
+    {'name': 'Friend Thandi','phone': '+27615550011'},
+  ];
+
+  List<String> get _guardianPhones => _guardians.map((g) => g['phone']!).toList();
+
   final List<Map<String, String>> _safePaths = [
     {'name': 'Morning: Noord → Jeppe', 'time': '06:00–08:00', 'reports': '0 incidents'},
     {'name': 'Afternoon: Park Station → Soweto', 'time': '15:00–18:00', 'reports': '2 minor alerts'},
     {'name': 'Evening: Sandton → Alexandra', 'time': '17:30–20:00', 'reports': '0 incidents'},
   ];
+
+  Future<void> _activateTracking(String destination) async {
+    setState(() => _isTrackingEnabled = true);
+    final msg = AlertService.eHailingTracking(
+      name: 'Me',
+      destination: destination.isEmpty ? 'my destination' : destination,
+    );
+    await AlertService.alertAll(contacts: _guardianPhones, message: msg);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('🚨 Safe Tracking Active — WhatsApp & SMS sent to guardians!'),
+      backgroundColor: AppColors.critical,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+  Future<void> _sendSOS() async {
+    final msg = AlertService.sosAlert(name: 'Me', location: null);
+    await AlertService.alertAll(contacts: _guardianPhones, message: msg);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('🚨 SOS SENT! WhatsApp & SMS alert sent to all guardians.'),
+      backgroundColor: AppColors.critical,
+      duration: Duration(seconds: 5),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +75,7 @@ class _SafetyDashboardScreenState extends State<SafetyDashboardScreen> {
             ),
             Text(
               'Your safety, our priority.',
-              style: TextStyle(color: Color(0xFFF9A8D4), fontSize: 12),
+              style: TextStyle(color: AppColors.accent, fontSize: 12),
             ),
           ],
         ),
@@ -119,14 +155,16 @@ class _SafetyDashboardScreenState extends State<SafetyDashboardScreen> {
                 value: _isTrackingEnabled,
                 activeTrackColor: AppColors.critical,
                 onChanged: (val) {
-                  setState(() => _isTrackingEnabled = val);
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(val
-                        ? '🚨 Safe Tracking Active: 3 guardians alerted!'
-                        : '✅ Safe Tracking Deactivated.'),
-                    backgroundColor: val ? AppColors.critical : AppColors.surface,
-                    duration: const Duration(seconds: 3),
-                  ));
+                  if (val) {
+                    _activateTracking('');
+                  } else {
+                    setState(() => _isTrackingEnabled = false);
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('✅ Safe Tracking Deactivated.'),
+                      backgroundColor: AppColors.surface,
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
                 },
               ),
             ],
@@ -214,7 +252,7 @@ class _SafetyDashboardScreenState extends State<SafetyDashboardScreen> {
               child: _quickLinkCard(
                 icon: Icons.groups,
                 label: 'Walking\nGroups',
-                color: const Color(0xFFEC4899),
+                color: AppColors.primary,
                 onTap: () {
                   // Switch to Groups tab via parent shell
                   context.findAncestorStateOfType<State>()?.setState(() {});

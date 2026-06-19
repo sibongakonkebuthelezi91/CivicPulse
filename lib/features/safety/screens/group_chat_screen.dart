@@ -118,7 +118,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             ),
             Text(
               '${widget.passengers.length} members',
-              style: const TextStyle(color: Color(0xFFF9A8D4), fontSize: 11),
+              style: const TextStyle(color: AppColors.accent, fontSize: 11),
             ),
           ],
         ),
@@ -166,7 +166,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                   CircleAvatar(
                     radius: 18,
                     backgroundColor: isMe
-                        ? const Color(0xFFEC4899)
+                        ? AppColors.primary
                         : AppColors.primary.withValues(alpha: 0.7),
                     child: Text(initials,
                         style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
@@ -184,7 +184,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           TextButton.icon(
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
@@ -193,8 +193,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 backgroundColor: AppColors.surface,
               ));
             },
-            icon: const Icon(Icons.share_location, color: Color(0xFFEC4899), size: 14),
-            label: const Text('Share Location', style: TextStyle(color: Color(0xFFEC4899), fontSize: 11, fontWeight: FontWeight.bold)),
+            icon: const Icon(Icons.share_location, color: AppColors.primary, size: 14),
+            label: const Text('Share Location', style: TextStyle(color: AppColors.primary, fontSize: 11, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -235,7 +235,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: msg.isMe ? const Color(0xFFEC4899) : AppColors.surface,
+                    color: msg.isMe ? AppColors.primary : AppColors.surface,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(16),
                       topRight: const Radius.circular(16),
@@ -263,7 +263,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             const SizedBox(width: 8),
             const CircleAvatar(
               radius: 14,
-              backgroundColor: Color(0xFFEC4899),
+              backgroundColor: AppColors.primary,
               child: Text('Me', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
             ),
           ],
@@ -305,7 +305,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             child: Container(
               padding: const EdgeInsets.all(12),
               decoration: const BoxDecoration(
-                color: Color(0xFFEC4899),
+                color: AppColors.primary,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.send, color: Colors.white, size: 18),
@@ -339,7 +339,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     children: [
                       CircleAvatar(
                         radius: 18,
-                        backgroundColor: p.name == 'You' ? const Color(0xFFEC4899) : AppColors.primary.withValues(alpha: 0.6),
+                        backgroundColor: p.name == 'You' ? AppColors.primary : AppColors.primary.withValues(alpha: 0.6),
                         child: Text(
                           p.name == 'You' ? 'Me' : p.name.substring(0, 2).toUpperCase(),
                           style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
