@@ -3,6 +3,7 @@ import '../../../core/constants/app_colors.dart';
 import 'group_chat_screen.dart';
 import 'journey_screen.dart';
 import 'main_shell.dart';
+import 'group_members_location_screen.dart';
 
 // ─── Data Models ──────────────────────────────────────────────────────────────
 
@@ -392,6 +393,32 @@ class _GroupsScreenState extends State<GroupsScreen>
                   style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
                 ),
                 const Spacer(),
+                SizedBox(
+                  height: 34,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPurple.withOpacity(0.7),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      elevation: 0,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => GroupMembersLocationScreen(group: group),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.location_on, size: 14),
+                    label: const Text(
+                      'Map',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
                 SizedBox(
                   height: 34,
                   child: ElevatedButton(
