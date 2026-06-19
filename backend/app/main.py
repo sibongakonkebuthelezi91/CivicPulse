@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import reports, queues
+from app.routers import reports, queues, users
 
 app = FastAPI(
     title="CivicPulse API",
@@ -25,6 +25,7 @@ app.add_middleware(
 # Register routers
 app.include_router(reports.router)
 app.include_router(queues.router)
+app.include_router(users.router)
 
 
 @app.get("/", tags=["Health"])

@@ -5,9 +5,16 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY,
     phone TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
+    id_number TEXT UNIQUE NOT NULL,
+    alert_contacts JSONB NOT NULL DEFAULT '[]'::jsonb,
     role TEXT NOT NULL DEFAULT 'citizen' CHECK (role IN ('citizen', 'doctor', 'driver', 'volunteer')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Existing development databases may already have users without id_number.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS id_number TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS alert_contacts JSONB NOT NULL DEFAULT '[]'::jsonb;
+CREATE UNIQUE INDEX IF NOT EXISTS users_id_number_key ON users (id_number);
 
 -- 2. INFRASTRUCTURE REPORTS TABLE
 CREATE TABLE IF NOT EXISTS reports (

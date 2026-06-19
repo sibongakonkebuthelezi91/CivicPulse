@@ -8,10 +8,12 @@ from uuid import UUID
 class UserBase(BaseModel):
     phone: str = Field(..., description="User phone number for notifications")
     name: str = Field(..., description="User's full name")
+    id_number: str = Field(..., min_length=13, max_length=13, description="South African ID number")
+    alert_contacts: list[str] = Field(default_factory=list, description="Guardian angel phone numbers for alerts")
     role: str = Field("citizen", description="Role: citizen, doctor, driver, or volunteer")
 
 class UserCreate(UserBase):
-    id: UUID = Field(..., description="Authentication UUID from auth system")
+    id: Optional[UUID] = Field(None, description="Optional authentication UUID from auth system")
 
 class UserResponse(UserBase):
     id: UUID

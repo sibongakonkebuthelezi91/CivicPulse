@@ -10,7 +10,8 @@ void main() {
 
     expect(find.text('GBV Safe Hub'), findsOneWidget);
     expect(find.text('SA ID Number'), findsOneWidget);
-    expect(find.text('Enter Safe Hub'), findsOneWidget);
+    expect(find.text('Find My Profile'), findsOneWidget);
+    expect(find.text('Sign up'), findsOneWidget);
   });
 
   testWidgets('blocks non-female SA ID sequence', (WidgetTester tester) async {
@@ -19,9 +20,7 @@ void main() {
 
     await tester.pumpWidget(const CivicPulseApp());
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'Test User');
-    await tester.enterText(find.byType(TextFormField).at(1), '8001015009087');
-    await tester.enterText(find.byType(TextFormField).at(2), '+27710000000');
+    await tester.enterText(find.byType(TextFormField).at(0), '8001015009087');
     tester.testTextInput.hide();
     await tester.pumpAndSettle();
 
@@ -37,6 +36,8 @@ void main() {
   ) async {
     await tester.pumpWidget(const CivicPulseApp());
 
+    await tester.tap(find.text('Sign up'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Use test profile'));
     await tester.pump();
 

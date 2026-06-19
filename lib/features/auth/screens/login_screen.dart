@@ -1,16 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_colors.dart';
 import '../../safety/screens/main_shell.dart';
 
+enum _AuthMode { signIn, signUp }
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+  static const apiBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:8000',
+  );
   static const testFullName = 'Test User';
   static const testSouthAfricanFemaleId = '9001010000080';
   static const testPhoneNumber = '+27710000000';
+  static const testGuardianOne = '+27720000000';
+  static const testGuardianTwo = '+27730000000';
 
   @visibleForTesting
   static bool isSouthAfricanFemaleId(String id) {
@@ -32,9 +43,13 @@ class _LoginScreenState extends State<LoginScreen>
   final _nameController = TextEditingController();
   final _idController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _guardianOneController = TextEditingController();
+  final _guardianTwoController = TextEditingController();
 
+  _AuthMode _mode = _AuthMode.signIn;
   bool _isLoading = false;
   String? _idError;
+  String? _formMessage;
   late final AnimationController _animationController;
   late final Animation<double> _fadeIn;
   late final Animation<Offset> _slideUp;
@@ -111,24 +126,44 @@ class _LoginScreenState extends State<LoginScreen>
     _nameController.dispose();
     _idController.dispose();
     _phoneController.dispose();
+    _guardianOneController.dispose();
+    _guardianTwoController.dispose();
     super.dispose();
   }
 
+  void _setMode(_AuthMode mode) {
+    setState(() {
+      _mode = mode;
+      _idError = null;
+      _formMessage = null;
+    });
+  }
+
   void _onIdChanged(String _) {
-    setState(() => _idError = null);
+    setState(() {
+      _idError = null;
+      _formMessage = null;
+    });
   }
 
   void _fillTestProfile() {
     setState(() {
+      _mode = _AuthMode.signUp;
       _nameController.text = LoginScreen.testFullName;
       _idController.text = LoginScreen.testSouthAfricanFemaleId;
       _phoneController.text = LoginScreen.testPhoneNumber;
+      _guardianOneController.text = LoginScreen.testGuardianOne;
+      _guardianTwoController.text = LoginScreen.testGuardianTwo;
       _idError = null;
+      _formMessage = null;
     });
   }
 
-  Future<void> _handleLogin() async {
-    setState(() => _idError = null);
+  Future<void> _handleSubmit() async {
+    setState(() {
+      _idError = null;
+      _formMessage = null;
+    });
     if (!_formKey.currentState!.validate()) return;
 
     final id = _idController.text.trim();
@@ -145,10 +180,73 @@ class _LoginScreenState extends State<LoginScreen>
     }
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
+    try {
+      final response = _mode == _AuthMode.signIn
+          ? await _findUserByIdNumber(id)
+          : await _createUserProfile(id);
 
-    setState(() => _isLoading = false);
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        _openSafeHub();
+        return;
+      }
+
+      setState(() {
+        _formMessage = _messageForResponse(response);
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _formMessage =
+            'Could not reach the database. Check that the API is running.';
+      });
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<http.Response> _findUserByIdNumber(String id) {
+    final uri = Uri.parse('${LoginScreen.apiBaseUrl}/api/users/id-number/$id');
+    return http.get(uri);
+  }
+
+  Future<http.Response> _createUserProfile(String id) {
+    final uri = Uri.parse('${LoginScreen.apiBaseUrl}/api/users/');
+    final alertContacts = [
+      _guardianOneController.text.trim(),
+      _guardianTwoController.text.trim(),
+    ].where((contact) => contact.isNotEmpty).toList();
+
+    return http.post(
+      uri,
+      headers: const {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'name': _nameController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'id_number': id,
+        'alert_contacts': alertContacts,
+        'role': 'citizen',
+      }),
+    );
+  }
+
+  String _messageForResponse(http.Response response) {
+    final fallback = _mode == _AuthMode.signIn
+        ? 'No profile was found for this ID number. Create an account first.'
+        : 'Could not create this profile. Please check the details.';
+
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded is Map && decoded['detail'] is String) {
+        return decoded['detail'] as String;
+      }
+    } catch (_) {
+      return fallback;
+    }
+    return fallback;
+  }
+
+  void _openSafeHub() {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -227,6 +325,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isSignUp = _mode == _AuthMode.signUp;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: DecoratedBox(
@@ -266,104 +366,58 @@ class _LoginScreenState extends State<LoginScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Center(
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        width: 76,
-                                        height: 76,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          gradient: const LinearGradient(
-                                            colors: [
-                                              Color(0xFFEC4899),
-                                              Color(0xFF14B8A6),
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color(
-                                                0xFF14B8A6,
-                                              ).withValues(alpha: 0.26),
-                                              blurRadius: 22,
-                                              offset: const Offset(0, 8),
-                                            ),
-                                          ],
-                                        ),
-                                        child: const Icon(
-                                          Icons.favorite_rounded,
-                                          color: Colors.white,
-                                          size: 38,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Text(
-                                        'GBV Safe Hub',
-                                        style: GoogleFonts.outfit(
-                                          color: Colors.white,
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        'A safer space for women and girls',
-                                        style: GoogleFonts.outfit(
-                                          color: const Color(0xFF5EEAD4),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 36),
-                                _NoticeBanner(),
-                                const SizedBox(height: 12),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton.icon(
-                                    onPressed: _fillTestProfile,
-                                    icon: const Icon(
-                                      Icons.science_outlined,
-                                      size: 16,
-                                    ),
-                                    label: Text(
-                                      'Use test profile',
-                                      style: GoogleFonts.outfit(
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                const _AuthHeader(),
                                 const SizedBox(height: 28),
-                                _buildLabel('Full Name'),
-                                const SizedBox(height: 8),
-                                TextFormField(
-                                  controller: _nameController,
-                                  keyboardType: TextInputType.name,
-                                  textCapitalization: TextCapitalization.words,
-                                  style: GoogleFonts.outfit(
-                                    color: Colors.white,
-                                    fontSize: 15,
+                                _ModeSwitch(mode: _mode, onChanged: _setMode),
+                                const SizedBox(height: 24),
+                                const _NoticeBanner(),
+                                if (isSignUp) ...[
+                                  const SizedBox(height: 12),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton.icon(
+                                      onPressed: _fillTestProfile,
+                                      icon: const Icon(
+                                        Icons.science_outlined,
+                                        size: 16,
+                                      ),
+                                      label: Text(
+                                        'Use test profile',
+                                        style: GoogleFonts.outfit(
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  decoration: _inputDecoration(
-                                    hint: 'e.g. Nomsa Dlamini',
-                                    icon: Icons.person_outline_rounded,
+                                ],
+                                const SizedBox(height: 28),
+                                if (isSignUp) ...[
+                                  _buildLabel('Full Name'),
+                                  const SizedBox(height: 8),
+                                  TextFormField(
+                                    controller: _nameController,
+                                    keyboardType: TextInputType.name,
+                                    textCapitalization:
+                                        TextCapitalization.words,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    ),
+                                    decoration: _inputDecoration(
+                                      hint: 'e.g. Nomsa Dlamini',
+                                      icon: Icons.person_outline_rounded,
+                                    ),
+                                    validator: (value) {
+                                      if (!isSignUp) return null;
+                                      if (value == null ||
+                                          value.trim().length < 2) {
+                                        return 'Please enter your full name';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.trim().length < 2) {
-                                      return 'Please enter your full name';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 20),
+                                  const SizedBox(height: 20),
+                                ],
                                 _buildLabel('SA ID Number'),
                                 const SizedBox(height: 8),
                                 TextFormField(
@@ -418,7 +472,9 @@ class _LoginScreenState extends State<LoginScreen>
                                     const SizedBox(width: 6),
                                     Expanded(
                                       child: Text(
-                                        'Gender is determined by digits 7-10 of your SA ID',
+                                        isSignUp
+                                            ? 'Your ID number is saved to find your profile later'
+                                            : 'Sign in by finding your profile with your ID number',
                                         style: GoogleFonts.outfit(
                                           color: Colors.white38,
                                           fontSize: 11.5,
@@ -427,34 +483,88 @@ class _LoginScreenState extends State<LoginScreen>
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 20),
-                                _buildLabel('Phone Number'),
-                                const SizedBox(height: 8),
-                                TextFormField(
-                                  controller: _phoneController,
-                                  keyboardType: TextInputType.phone,
-                                  style: GoogleFonts.outfit(
-                                    color: Colors.white,
-                                    fontSize: 15,
+                                if (isSignUp) ...[
+                                  const SizedBox(height: 20),
+                                  _buildLabel('Phone Number'),
+                                  const SizedBox(height: 8),
+                                  TextFormField(
+                                    controller: _phoneController,
+                                    keyboardType: TextInputType.phone,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    ),
+                                    decoration: _inputDecoration(
+                                      hint: '+27 71 000 0000',
+                                      icon: Icons.phone_outlined,
+                                    ),
+                                    validator: (value) {
+                                      if (!isSignUp) return null;
+                                      if (value == null ||
+                                          value.trim().isEmpty) {
+                                        return 'Phone number is required';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  decoration: _inputDecoration(
-                                    hint: '+27 71 000 0000',
-                                    icon: Icons.phone_outlined,
+                                  const SizedBox(height: 20),
+                                  _buildLabel('Guardian Angel Numbers'),
+                                  const SizedBox(height: 8),
+                                  TextFormField(
+                                    controller: _guardianOneController,
+                                    keyboardType: TextInputType.phone,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    ),
+                                    decoration: _inputDecoration(
+                                      hint: '+27 72 000 0000',
+                                      icon: Icons.contact_emergency_outlined,
+                                    ),
+                                    validator: (value) {
+                                      if (!isSignUp) return null;
+                                      final first = value?.trim() ?? '';
+                                      final second = _guardianTwoController.text
+                                          .trim();
+                                      if (first.isEmpty && second.isEmpty) {
+                                        return 'Add at least one guardian angel number';
+                                      }
+                                      return null;
+                                    },
                                   ),
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'Phone number is required';
-                                    }
-                                    return null;
-                                  },
-                                ),
+                                  const SizedBox(height: 12),
+                                  TextFormField(
+                                    controller: _guardianTwoController,
+                                    keyboardType: TextInputType.phone,
+                                    style: GoogleFonts.outfit(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    ),
+                                    decoration: _inputDecoration(
+                                      hint: '+27 73 000 0000',
+                                      icon: Icons.contact_phone_outlined,
+                                    ),
+                                  ),
+                                ],
+                                if (_formMessage != null) ...[
+                                  const SizedBox(height: 18),
+                                  _StatusMessage(message: _formMessage!),
+                                ],
                                 const SizedBox(height: 32),
                                 SizedBox(
                                   width: double.infinity,
                                   height: 56,
-                                  child: _LoginButton(
+                                  child: _AuthButton(
                                     isLoading: _isLoading,
-                                    onPressed: _isLoading ? null : _handleLogin,
+                                    label: isSignUp
+                                        ? 'Create Safe Hub Profile'
+                                        : 'Find My Profile',
+                                    icon: isSignUp
+                                        ? Icons.person_add_alt_1_rounded
+                                        : Icons.search_rounded,
+                                    onPressed: _isLoading
+                                        ? null
+                                        : _handleSubmit,
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -533,7 +643,108 @@ class _LoginScreenState extends State<LoginScreen>
   }
 }
 
+class _AuthHeader extends StatelessWidget {
+  const _AuthHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Container(
+            width: 76,
+            height: 76,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: const LinearGradient(
+                colors: [Color(0xFFEC4899), Color(0xFF14B8A6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF14B8A6).withValues(alpha: 0.26),
+                  blurRadius: 22,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.favorite_rounded,
+              color: Colors.white,
+              size: 38,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'GBV Safe Hub',
+            style: GoogleFonts.outfit(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'A safer space for women and girls',
+            style: GoogleFonts.outfit(
+              color: const Color(0xFF5EEAD4),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ModeSwitch extends StatelessWidget {
+  const _ModeSwitch({required this.mode, required this.onChanged});
+
+  final _AuthMode mode;
+  final ValueChanged<_AuthMode> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<_AuthMode>(
+      segments: const [
+        ButtonSegment(
+          value: _AuthMode.signIn,
+          icon: Icon(Icons.login_rounded),
+          label: Text('Sign in'),
+        ),
+        ButtonSegment(
+          value: _AuthMode.signUp,
+          icon: Icon(Icons.person_add_alt_1_rounded),
+          label: Text('Sign up'),
+        ),
+      ],
+      selected: {mode},
+      onSelectionChanged: (selected) => onChanged(selected.first),
+      style: ButtonStyle(
+        foregroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return Colors.white;
+          return Colors.white70;
+        }),
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const Color(0xFF14B8A6).withValues(alpha: 0.24);
+          }
+          return AppColors.surface.withValues(alpha: 0.72);
+        }),
+        side: WidgetStateProperty.all(const BorderSide(color: Colors.white12)),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+    );
+  }
+}
+
 class _NoticeBanner extends StatelessWidget {
+  const _NoticeBanner();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -555,7 +766,7 @@ class _NoticeBanner extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'This platform verifies access with your South African ID number.',
+              'Profiles are created once, then found later with your South African ID number.',
               style: GoogleFonts.outfit(
                 color: Colors.white70,
                 fontSize: 12.5,
@@ -569,10 +780,44 @@ class _NoticeBanner extends StatelessWidget {
   }
 }
 
-class _LoginButton extends StatelessWidget {
-  const _LoginButton({required this.isLoading, required this.onPressed});
+class _StatusMessage extends StatelessWidget {
+  const _StatusMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.critical.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.critical.withValues(alpha: 0.34)),
+      ),
+      child: Text(
+        message,
+        style: GoogleFonts.outfit(
+          color: Colors.white70,
+          fontSize: 12.5,
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+}
+
+class _AuthButton extends StatelessWidget {
+  const _AuthButton({
+    required this.isLoading,
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
 
   final bool isLoading;
+  final String label;
+  final IconData icon;
   final VoidCallback? onPressed;
 
   @override
@@ -614,13 +859,16 @@ class _LoginButton extends StatelessWidget {
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.lock_open_rounded, size: 20),
+                  Icon(icon, size: 20),
                   const SizedBox(width: 10),
-                  Text(
-                    'Enter Safe Hub',
-                    style: GoogleFonts.outfit(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                  Flexible(
+                    child: Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ],
