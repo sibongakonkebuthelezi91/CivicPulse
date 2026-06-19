@@ -1,8 +1,13 @@
-from fastapi import FastAPI, Request
+import logging
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from postgrest.exceptions import APIError
+from app.database import get_supabase
 from app.routers import reports, queues, users
+
+logger = logging.getLogger("uvicorn.error")
 
 app = FastAPI(
     title="CivicPulse API",
@@ -23,6 +28,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+async def startup_event() -> None:
+    try:
+        get_supabase()
+        logger.info("Supabase credentials loaded successfully.")
+    except Exception as exc:
+        logger.error("Failed to load Supabase credentials: %s", exc)
+        raise
+
 
 @app.exception_handler(APIError)
 async def supabase_api_error_handler(request: Request, exc: APIError):
@@ -53,5 +69,19 @@ async def root():
 
 @app.get("/health", tags=["Health"])
 async def health():
-    """Lightweight health probe for Render / Koyeb uptime checks."""
-    return {"status": "healthy"}
+    """Health probe for Render / Koyeb uptime checks and Supabase readiness."""
+    try:
+        get_supabase()
+        return {
+            "status": "healthy",
+            "supabase": "ready",
+        }
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "status": "unhealthy",
+                "supabase": "missing or invalid credentials",
+                "error": str(exc),
+            },
+        )

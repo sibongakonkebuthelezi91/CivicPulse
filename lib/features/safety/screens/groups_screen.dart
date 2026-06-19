@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import 'group_chat_screen.dart';
+import 'journey_screen.dart';
+import 'main_shell.dart';
 
 // ─── Data Models ──────────────────────────────────────────────────────────────
 
@@ -206,11 +208,29 @@ class _GroupsScreenState extends State<GroupsScreen>
         _buildSessionToggle(),
         Expanded(
           child: _filteredGroups.isEmpty
-              ? _buildEmptyState()
+              ? SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      _buildEmptyState(),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _buildWalkSoloGuardianCard(),
+                      ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
-                  itemCount: _filteredGroups.length,
-                  itemBuilder: (_, i) => _buildWalkingGroupCard(_filteredGroups[i]),
+                  itemCount: _filteredGroups.length + 1,
+                  itemBuilder: (_, i) {
+                    if (i == _filteredGroups.length) {
+                      return _buildWalkSoloGuardianCard();
+                    }
+                    return _buildWalkingGroupCard(_filteredGroups[i]);
+                  },
                 ),
         ),
       ],
@@ -759,20 +779,41 @@ class _GroupsScreenState extends State<GroupsScreen>
             style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF59E0B).withValues(alpha: 0.2),
-              foregroundColor: const Color(0xFFF59E0B),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              elevation: 0,
-            ),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('🔔 You\'ll be notified when 3+ women are going your way.'),
-                backgroundColor: AppColors.surface,
-              ));
-            },
-            child: const Text('Notify Me When Ready', style: TextStyle(fontWeight: FontWeight.bold)),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFFF59E0B),
+                    side: const BorderSide(color: Color(0xFFF59E0B)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('🔔 You\'ll be notified when 3+ women are going your way.'),
+                      backgroundColor: AppColors.surface,
+                    ));
+                  },
+                  child: const Text('Notify Me', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEC4899),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    elevation: 0,
+                  ),
+                  onPressed: () => _initiateGuardianAngelFlow(defaultRoute: _destinationController.text),
+                  icon: const Icon(Icons.shield, size: 14, color: Colors.white),
+                  label: const Text('Alert Guardian', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.white)),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -1028,6 +1069,364 @@ class _GroupsScreenState extends State<GroupsScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // ─── Guardian Angel Alert Flow ──────────────────────────────────────────────
+
+  Widget _buildWalkSoloGuardianCard() {
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 20),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFEC4899).withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEC4899).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.shield, color: Color(0xFFEC4899), size: 16),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Walk Solo with Guardian Angel',
+                style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'If you must walk alone, enable Guardian Angel tracking. Your contact will receive a real-time path link and checkpoint updates.',
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.4),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 36,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.15),
+                foregroundColor: const Color(0xFFEC4899),
+                side: const BorderSide(color: Color(0xFFEC4899)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                elevation: 0,
+              ),
+              onPressed: () => _initiateGuardianAngelFlow(defaultRoute: 'Walking Route'),
+              icon: const Icon(Icons.share_location, size: 14, color: Color(0xFFEC4899)),
+              label: const Text(
+                'Activate Guardian Angel & Depart',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Color(0xFFEC4899)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _initiateGuardianAngelFlow({required String defaultRoute}) {
+    String selectedName = 'Mom';
+    String selectedPhone = '+27 82 123 4567';
+    bool isCustom = false;
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) => Padding(
+          padding: EdgeInsets.fromLTRB(20, 20, 20, MediaQuery.of(ctx).viewInsets.bottom + 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
+                ),
+              ),
+              const SizedBox(height: 18),
+              const Row(
+                children: [
+                  Icon(Icons.shield, color: Color(0xFFEC4899), size: 22),
+                  SizedBox(width: 10),
+                  Text(
+                    'Designate Guardian Angel',
+                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Select a contact who will receive live tracking alerts for your journey.',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+              ),
+              const SizedBox(height: 16),
+
+              // Guardian Options
+              ...[
+                {'name': 'Mom', 'phone': '+27 82 123 4567'},
+                {'name': 'Sister', 'phone': '+27 73 987 6543'},
+                {'name': 'Friend Thandi', 'phone': '+27 61 555 0011'},
+              ].map((c) {
+                final selected = !isCustom && selectedName == c['name'];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  decoration: BoxDecoration(
+                    color: selected ? const Color(0xFFEC4899).withValues(alpha: 0.08) : AppColors.background,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selected ? const Color(0xFFEC4899) : Colors.white10,
+                      width: selected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: ListTile(
+                    dense: true,
+                    title: Text(c['name']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                    subtitle: Text(c['phone']!, style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
+                    trailing: Icon(
+                      selected ? Icons.radio_button_checked : Icons.radio_button_off,
+                      color: selected ? const Color(0xFFEC4899) : AppColors.textMuted,
+                      size: 18,
+                    ),
+                    onTap: () {
+                      setDlgState(() {
+                        isCustom = false;
+                        selectedName = c['name']!;
+                        selectedPhone = c['phone']!;
+                      });
+                    },
+                  ),
+                );
+              }),
+
+              // Custom option toggle
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: isCustom ? const Color(0xFFEC4899).withValues(alpha: 0.08) : AppColors.background,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isCustom ? const Color(0xFFEC4899) : Colors.white10,
+                    width: isCustom ? 1.5 : 1,
+                  ),
+                ),
+                child: ListTile(
+                  dense: true,
+                  title: const Text('Custom Contact', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                  subtitle: const Text('Enter another name and phone number', style: TextStyle(color: AppColors.textMuted, fontSize: 11)),
+                  trailing: Icon(
+                    isCustom ? Icons.radio_button_checked : Icons.radio_button_off,
+                    color: isCustom ? const Color(0xFFEC4899) : AppColors.textMuted,
+                    size: 18,
+                  ),
+                  onTap: () {
+                    setDlgState(() {
+                      isCustom = true;
+                    });
+                  },
+                ),
+              ),
+
+              if (isCustom) ...[
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: nameController,
+                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        decoration: InputDecoration(
+                          hintText: 'Contact Name',
+                          hintStyle: const TextStyle(color: AppColors.textMuted),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: TextField(
+                        controller: phoneController,
+                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          hintText: 'Phone Number',
+                          hintStyle: const TextStyle(color: AppColors.textMuted),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFEC4899),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 0,
+                  ),
+                  onPressed: () {
+                    final finalName = isCustom ? nameController.text.trim() : selectedName;
+                    final finalPhone = isCustom ? phoneController.text.trim() : selectedPhone;
+
+                    if (finalName.isEmpty || finalPhone.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Please provide both name and phone number.'),
+                        backgroundColor: AppColors.surface,
+                      ));
+                      return;
+                    }
+
+                    Navigator.of(ctx).pop();
+                    _showSimulatedSendingAlert(
+                      guardianName: finalName,
+                      guardianPhone: finalPhone,
+                      route: defaultRoute,
+                    );
+                  },
+                  icon: const Icon(Icons.send, color: Colors.white),
+                  label: const Text('Send Alert & Start Tracked Journey', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSimulatedSendingAlert({
+    required String guardianName,
+    required String guardianPhone,
+    required String route,
+  }) {
+    String currentStep = 'Generating secure tracking link...';
+    double progress = 0.25;
+    bool completed = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDlgState) {
+          if (!completed) {
+            Future.delayed(const Duration(milliseconds: 1000), () {
+              if (ctx.mounted) {
+                setDlgState(() {
+                  currentStep = 'Formulating SMS message...';
+                  progress = 0.5;
+                });
+              }
+            });
+            Future.delayed(const Duration(milliseconds: 2000), () {
+              if (ctx.mounted) {
+                setDlgState(() {
+                  currentStep = 'Sending secure tracking payload to network...';
+                  progress = 0.75;
+                });
+              }
+            });
+            Future.delayed(const Duration(milliseconds: 3000), () {
+              if (ctx.mounted) {
+                setDlgState(() {
+                  currentStep = 'Guardian Alert successfully sent! 🛡️';
+                  progress = 1.0;
+                  completed = true;
+                });
+              }
+            });
+            Future.delayed(const Duration(milliseconds: 4200), () {
+              if (ctx.mounted) {
+                Navigator.of(ctx).pop(); // Dismiss dialogue
+
+                // Trigger programmatic launch on JourneyScreen
+                final startLoc = 'Current Location';
+                final destLoc = route.isNotEmpty ? route : 'Destination';
+                JourneyScreen.launchJourneyWithGuardian(
+                  start: startLoc,
+                  destination: destLoc,
+                  name: guardianName,
+                  phone: guardianPhone,
+                );
+
+                // Switch tab to the Journey Screen (index 2)
+                MainShell.switchToTab(context, 2);
+              }
+            });
+          }
+
+          return AlertDialog(
+            backgroundColor: AppColors.surface,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            content: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (completed)
+                    const Icon(Icons.verified, color: Colors.green, size: 50)
+                  else
+                    const SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFEC4899),
+                        strokeWidth: 3,
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  Text(
+                    completed ? 'SMS Sent!' : 'Alerting Guardian',
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    currentStep,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+                  ),
+                  const SizedBox(height: 20),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.white10,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFEC4899)),
+                      minHeight: 6,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

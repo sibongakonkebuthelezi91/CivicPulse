@@ -8,6 +8,11 @@ class MainShell extends StatefulWidget {
   final int initialIndex;
   const MainShell({super.key, this.initialIndex = 0});
 
+  static void switchToTab(BuildContext context, int index) {
+    final state = context.findAncestorStateOfType<_MainShellState>();
+    state?.setTab(index);
+  }
+
   @override
   State<MainShell> createState() => _MainShellState();
 }
@@ -20,6 +25,12 @@ class _MainShellState extends State<MainShell> {
     GroupsScreen(),
     JourneyScreen(),
   ];
+
+  void setTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   void initState() {
