@@ -118,7 +118,7 @@ class _GroupMembersLocationScreenState
           // Members list at bottom
           Container(
             decoration: BoxDecoration(
-              color: AppColors.cardBackground,
+              color: AppColors.cardBg,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(16),
               ),

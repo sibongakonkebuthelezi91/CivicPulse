@@ -397,7 +397,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                   height: 34,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPurple.withOpacity(0.7),
+                      backgroundColor: AppColors.primary.withOpacity(0.7),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       padding: const EdgeInsets.symmetric(horizontal: 12),

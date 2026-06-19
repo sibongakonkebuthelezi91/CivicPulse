@@ -125,7 +125,6 @@ class _GroupMembersMapState extends State<GroupMembersMap> {
               ],
               color: Colors.blue.withOpacity(0.6),
               strokeWidth: 3.0,
-              isDashed: false,
             ),
           ],
         ),

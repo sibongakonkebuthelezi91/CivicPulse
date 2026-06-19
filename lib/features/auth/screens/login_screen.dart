@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_colors.dart';
+import '../services/local_auth_service.dart';
 import '../../safety/screens/main_shell.dart';
 
 enum _AuthMode { signIn, signUp }
@@ -14,22 +11,6 @@ enum _AuthMode { signIn, signUp }
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-  static const _apiBaseUrlFromEnv = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://localhost:8000',
-  );
-
-  static String get apiBaseUrl {
-    if (_apiBaseUrlFromEnv != 'http://localhost:8000') {
-      return _apiBaseUrlFromEnv;
-    }
-
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:8000';
-    }
-
-    return _apiBaseUrlFromEnv;
-  }
   static const testFullName = 'Test User';
   static const testSouthAfricanFemaleId = '9001010000080';
   static const testPhoneNumber = '+27710000000';
@@ -194,69 +175,42 @@ class _LoginScreenState extends State<LoginScreen>
 
     setState(() => _isLoading = true);
     try {
-      final response = _mode == _AuthMode.signIn
-          ? await _findUserByIdNumber(id)
-          : await _createUserProfile(id);
+      if (_mode == _AuthMode.signIn) {
+        final user = await LocalAuthService.findByIdNumber(id);
+        if (!mounted) return;
+        if (user != null) {
+          _openSafeHub();
+        } else {
+          setState(() {
+            _formMessage =
+                'No profile found for this ID number. Please sign up first.';
+          });
+        }
+      } else {
+        final alertContacts = [
+          _guardianOneController.text.trim(),
+          _guardianTwoController.text.trim(),
+        ].where((c) => c.isNotEmpty).toList();
 
-      if (!mounted) return;
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        _openSafeHub();
-        return;
+        final error = await LocalAuthService.createUser(
+          name: _nameController.text.trim(),
+          idNumber: id,
+          phone: _phoneController.text.trim(),
+          alertContacts: alertContacts,
+        );
+        if (!mounted) return;
+        if (error == null) {
+          _openSafeHub();
+        } else {
+          setState(() => _formMessage = error);
+        }
       }
-
-      setState(() {
-        _formMessage = _messageForResponse(response);
-      });
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
-      setState(() {
-        _formMessage =
-            'Could not reach the API at ${LoginScreen.apiBaseUrl}. Ensure the backend is running and reachable.';
-      });
+      setState(() => _formMessage = 'Something went wrong. Please try again.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
-  }
-
-  Future<http.Response> _findUserByIdNumber(String id) {
-    final uri = Uri.parse('${LoginScreen.apiBaseUrl}/api/users/id-number/$id');
-    return http.get(uri);
-  }
-
-  Future<http.Response> _createUserProfile(String id) {
-    final uri = Uri.parse('${LoginScreen.apiBaseUrl}/api/users/');
-    final alertContacts = [
-      _guardianOneController.text.trim(),
-      _guardianTwoController.text.trim(),
-    ].where((contact) => contact.isNotEmpty).toList();
-
-    return http.post(
-      uri,
-      headers: const {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': _nameController.text.trim(),
-        'phone': _phoneController.text.trim(),
-        'id_number': id,
-        'alert_contacts': alertContacts,
-        'role': 'citizen',
-      }),
-    );
-  }
-
-  String _messageForResponse(http.Response response) {
-    final fallback = _mode == _AuthMode.signIn
-        ? 'No profile was found for this ID number. Create an account first.'
-        : 'Could not create this profile. Please check the details.';
-
-    try {
-      final decoded = jsonDecode(response.body);
-      if (decoded is Map && decoded['detail'] is String) {
-        return decoded['detail'] as String;
-      }
-    } catch (_) {
-      return fallback;
-    }
-    return fallback;
   }
 
   void _openSafeHub() {
