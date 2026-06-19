@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/constants/app_colors.dart';
@@ -13,10 +14,22 @@ enum _AuthMode { signIn, signUp }
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-  static const apiBaseUrl = String.fromEnvironment(
+  static const _apiBaseUrlFromEnv = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'http://localhost:8000',
   );
+
+  static String get apiBaseUrl {
+    if (_apiBaseUrlFromEnv != 'http://localhost:8000') {
+      return _apiBaseUrlFromEnv;
+    }
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:8000';
+    }
+
+    return _apiBaseUrlFromEnv;
+  }
   static const testFullName = 'Test User';
   static const testSouthAfricanFemaleId = '9001010000080';
   static const testPhoneNumber = '+27710000000';
@@ -198,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen>
       if (!mounted) return;
       setState(() {
         _formMessage =
-            'Could not reach the database. Check that the API is running.';
+            'Could not reach the API at ${LoginScreen.apiBaseUrl}. Ensure the backend is running and reachable.';
       });
     } finally {
       if (mounted) setState(() => _isLoading = false);

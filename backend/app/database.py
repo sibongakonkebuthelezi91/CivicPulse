@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from supabase import create_client, Client
 from app.config import settings
 
@@ -13,8 +14,11 @@ def get_supabase() -> Client:
     Raises ValueError if credentials are not configured.
     """
     if not supabase_client:
-        raise ValueError(
-            "Supabase credentials are not configured. Please set SUPABASE_URL and SUPABASE_KEY "
-            "in your .env file or environment variables."
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Supabase credentials are not configured. "
+                "Please set SUPABASE_URL and SUPABASE_KEY in backend/.env or environment variables."
+            ),
         )
     return supabase_client
