@@ -343,9 +343,9 @@ class _JourneyScreenState extends State<JourneyScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: riskColor.withOpacity(0.1),
+        color: riskColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: riskColor.withOpacity(0.35)),
+        border: Border.all(color: riskColor.withValues(alpha: 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,7 +368,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                 : currentRating.risk > 0.4
                     ? '🟡 Moderate traffic right now. ${best != null ? '${best.hour}:00 looks quieter.' : 'Travel in groups if possible.'}'
                     : '✅ Good time to travel! Roads are relatively quiet right now.',
-            style: TextStyle(color: riskColor.withOpacity(0.9), fontSize: 12),
+            style: TextStyle(color: riskColor.withValues(alpha: 0.9), fontSize: 12),
           ),
           if (best != null && currentRating.risk > 0.4) ...[
             const SizedBox(height: 10),
@@ -559,9 +559,9 @@ class _JourneyScreenState extends State<JourneyScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -656,14 +656,14 @@ class _JourneyScreenState extends State<JourneyScreen>
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFEC4899).withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFFEC4899).withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEC4899).withOpacity(0.15), shape: BoxShape.circle),
+                    color: const Color(0xFFEC4899).withValues(alpha: 0.15), shape: BoxShape.circle),
                   child: const Icon(Icons.route, color: Color(0xFFEC4899), size: 22),
                 ),
                 const SizedBox(width: 14),
@@ -691,10 +691,10 @@ class _JourneyScreenState extends State<JourneyScreen>
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isOverdue ? AppColors.critical.withOpacity(0.1) : AppColors.surface,
+                color: isOverdue ? AppColors.critical.withValues(alpha: 0.1) : AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                    color: isOverdue ? AppColors.critical : AppColors.primary.withOpacity(0.3),
+                    color: isOverdue ? AppColors.critical : AppColors.primary.withValues(alpha: 0.3),
                     width: isOverdue ? 2 : 1),
               ),
               child: Column(
@@ -741,9 +741,9 @@ class _JourneyScreenState extends State<JourneyScreen>
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
               ),
               child: const Column(
                 children: [
@@ -833,7 +833,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                         width: 2,
                         height: 32,
                         color: cp.status == CheckpointStatus.completed
-                            ? Colors.green.withOpacity(0.4)
+                            ? Colors.green.withValues(alpha: 0.4)
                             : Colors.white10,
                       ),
                   ],
@@ -872,7 +872,6 @@ class _JourneyScreenState extends State<JourneyScreen>
 
   Widget _buildCompletedView() {
     final completed = _checkpoints.where((c) => c.status == CheckpointStatus.completed).length;
-    final missed = _checkpoints.where((c) => c.status == CheckpointStatus.missed).length;
     final total = _checkpoints.length;
     final safetyScore = total > 0 ? ((completed / total) * 100).round() : 100;
 
@@ -885,7 +884,7 @@ class _JourneyScreenState extends State<JourneyScreen>
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.green.withOpacity(0.3)),
+              border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
             ),
             child: Column(
               children: [
@@ -997,7 +996,6 @@ class _JourneyScreenState extends State<JourneyScreen>
 
     final avgDuration = (_history.map((j) => j.durationMinutes).reduce((a, b) => a + b) / _history.length).round();
     final totalTrips = _history.length;
-    final safeTrips = _history.where((j) => j.arrivedSafely).length;
     final allCheckpointsHit = _history.fold<int>(0, (sum, j) => sum + j.checkpointsHit);
     final allCheckpointsMissed = _history.fold<int>(0, (sum, j) => sum + j.checkpointsMissed);
     final checkpointRate = allCheckpointsHit + allCheckpointsMissed > 0
@@ -1139,7 +1137,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                         Container(
                           height: 60 * r.risk + 6,
                           decoration: BoxDecoration(
-                            color: isCurrent ? color : color.withOpacity(0.7),
+                            color: isCurrent ? color : color.withValues(alpha: 0.7),
                             borderRadius: BorderRadius.circular(3),
                             border: isCurrent ? Border.all(color: Colors.white, width: 1.5) : null,
                           ),
@@ -1257,9 +1255,9 @@ class _JourneyScreenState extends State<JourneyScreen>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.07),
+        color: color.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -1347,7 +1345,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: j.arrivedSafely ? Colors.green.withOpacity(0.15) : AppColors.critical.withOpacity(0.15),
+                      color: j.arrivedSafely ? Colors.green.withValues(alpha: 0.15) : AppColors.critical.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -1385,7 +1383,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text('$safetyScore%', style: TextStyle(color: scoreColor, fontSize: 14, fontWeight: FontWeight.bold)),
-                      Text('safety', style: TextStyle(color: scoreColor.withOpacity(0.7), fontSize: 9)),
+                      Text('safety', style: TextStyle(color: scoreColor.withValues(alpha: 0.7), fontSize: 9)),
                     ],
                   ),
                 ],

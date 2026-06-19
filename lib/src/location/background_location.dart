@@ -87,7 +87,9 @@ void onStart(ServiceInstance service) async {
     android: initializationSettingsAndroid,
   );
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  await flutterLocalNotificationsPlugin.initialize(
+    settings: initializationSettings,
+  );
 
   if (service is AndroidServiceInstance) {
     service.on('setAsForeground').listen((event) {
@@ -164,10 +166,10 @@ void onStart(ServiceInstance service) async {
 
         // Show a local high-importance notification
         await flutterLocalNotificationsPlugin.show(
-          point.id.hashCode,
-          alertTitle,
-          alertMsg,
-          NotificationDetails(
+          id: point.id.hashCode,
+          title: alertTitle,
+          body: alertMsg,
+          notificationDetails: NotificationDetails(
             android: AndroidNotificationDetails(
               alertChannelId,
               alertChannel.name,

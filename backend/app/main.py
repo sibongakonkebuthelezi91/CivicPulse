@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from postgrest.exceptions import APIError
 from app.routers import reports, queues, users
 
 app = FastAPI(
@@ -21,6 +23,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.exception_handler(APIError)
+async def supabase_api_error_handler(request: Request, exc: APIError):
+    """
+    Without this, an unhandled Postgrest error skips CORSMiddleware's response
+    headers entirely, so the browser reports a misleading CORS failure instead
+    of the real database error.
+    """
+    return JSONResponse(status_code=500, content={"detail": exc.message})
+
 
 # Register routers
 app.include_router(reports.router)

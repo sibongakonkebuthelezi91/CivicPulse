@@ -167,7 +167,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     radius: 18,
                     backgroundColor: isMe
                         ? const Color(0xFFEC4899)
-                        : AppColors.primary.withOpacity(0.7),
+                        : AppColors.primary.withValues(alpha: 0.7),
                     child: Text(initials,
                         style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
                   ),
@@ -184,7 +184,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           TextButton.icon(
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              backgroundColor: const Color(0xFFEC4899).withOpacity(0.1),
+              backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
@@ -214,7 +214,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
           if (!msg.isMe) ...[
             CircleAvatar(
               radius: 14,
-              backgroundColor: AppColors.primary.withOpacity(0.5),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.5),
               child: Text(
                 msg.sender.substring(0, 2).toUpperCase(),
                 style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
@@ -339,7 +339,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     children: [
                       CircleAvatar(
                         radius: 18,
-                        backgroundColor: p.name == 'You' ? const Color(0xFFEC4899) : AppColors.primary.withOpacity(0.6),
+                        backgroundColor: p.name == 'You' ? const Color(0xFFEC4899) : AppColors.primary.withValues(alpha: 0.6),
                         child: Text(
                           p.name == 'You' ? 'Me' : p.name.substring(0, 2).toUpperCase(),
                           style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),

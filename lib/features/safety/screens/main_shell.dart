@@ -41,7 +41,7 @@ class _MainShellState extends State<MainShell> {
           border: const Border(top: BorderSide(color: Colors.white10, width: 1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withValues(alpha: 0.4),
               blurRadius: 20,
               offset: const Offset(0, -4),
             ),

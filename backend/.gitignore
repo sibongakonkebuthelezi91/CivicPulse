@@ -11,6 +11,9 @@ env/
 # Environment variables — NEVER commit these
 .env
 
+# Local dev database
+dev.db
+
 # IDE
 .vscode/
 .idea/

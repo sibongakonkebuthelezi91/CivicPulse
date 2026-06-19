@@ -296,7 +296,7 @@ class _GroupsScreenState extends State<GroupsScreen>
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: joined ? const Color(0xFFEC4899).withOpacity(0.4) : Colors.white10,
+          color: joined ? const Color(0xFFEC4899).withValues(alpha: 0.4) : Colors.white10,
           width: joined ? 1.5 : 1,
         ),
       ),
@@ -311,8 +311,8 @@ class _GroupsScreenState extends State<GroupsScreen>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: group.session == GroupSession.morning
-                        ? const Color(0xFFF59E0B).withOpacity(0.15)
-                        : const Color(0xFF6366F1).withOpacity(0.15),
+                        ? const Color(0xFFF59E0B).withValues(alpha: 0.15)
+                        : const Color(0xFF6366F1).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -579,7 +579,7 @@ class _GroupsScreenState extends State<GroupsScreen>
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.15),
+                color: Colors.green.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(Icons.check_circle, color: Colors.green, size: 18),
@@ -638,7 +638,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                           radius: 13,
                           backgroundColor: idx == 0
                               ? const Color(0xFFEC4899)
-                              : AppColors.primary.withOpacity(0.7),
+                              : AppColors.primary.withValues(alpha: 0.7),
                           child: Text(
                             '${idx + 1}',
                             style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
@@ -742,7 +742,7 @@ class _GroupsScreenState extends State<GroupsScreen>
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF59E0B).withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -761,7 +761,7 @@ class _GroupsScreenState extends State<GroupsScreen>
           const SizedBox(height: 16),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFF59E0B).withOpacity(0.2),
+              backgroundColor: const Color(0xFFF59E0B).withValues(alpha: 0.2),
               foregroundColor: const Color(0xFFF59E0B),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               elevation: 0,
@@ -808,7 +808,7 @@ class _GroupsScreenState extends State<GroupsScreen>
         children: [
           CircleAvatar(
             radius: 11,
-            backgroundColor: const Color(0xFFEC4899).withOpacity(0.2),
+            backgroundColor: const Color(0xFFEC4899).withValues(alpha: 0.2),
             child: Text(num, style: const TextStyle(color: Color(0xFFEC4899), fontSize: 10, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(width: 10),
@@ -918,7 +918,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
                             color: session == GroupSession.morning
-                                ? const Color(0xFFF59E0B).withOpacity(0.15)
+                                ? const Color(0xFFF59E0B).withValues(alpha: 0.15)
                                 : AppColors.background,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
@@ -947,7 +947,7 @@ class _GroupsScreenState extends State<GroupsScreen>
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
                             color: session == GroupSession.evening
-                                ? const Color(0xFF6366F1).withOpacity(0.15)
+                                ? const Color(0xFF6366F1).withValues(alpha: 0.15)
                                 : AppColors.background,
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(

@@ -81,17 +81,16 @@ class _OfflineMapState extends State<OfflineMap> {
 
             switch (point.type) {
               case GeofenceType.trafficLight:
-                circleColor = Colors.amber.withOpacity(0.12);
-                strokeColor = Colors.amber.withOpacity(0.45);
+                circleColor = Colors.amber.withValues(alpha: 0.12);
+                strokeColor = Colors.amber.withValues(alpha: 0.45);
                 break;
               case GeofenceType.animalCrossing:
-                circleColor = Colors.orange.withOpacity(0.12);
-                strokeColor = Colors.orange.withOpacity(0.45);
+                circleColor = Colors.orange.withValues(alpha: 0.12);
+                strokeColor = Colors.orange.withValues(alpha: 0.45);
                 break;
               case GeofenceType.pothole:
-              default:
-                circleColor = Colors.red.withOpacity(0.12);
-                strokeColor = Colors.red.withOpacity(0.45);
+                circleColor = Colors.red.withValues(alpha: 0.12);
+                strokeColor = Colors.red.withValues(alpha: 0.45);
                 break;
             }
 
@@ -122,7 +121,7 @@ class _OfflineMapState extends State<OfflineMap> {
                   builder: (context, value, _) => Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.blueAccent.withOpacity(0.25 * (2.0 - value)),
+                      color: Colors.blueAccent.withValues(alpha: 0.25 * (2.0 - value)),
                     ),
                   ),
                 ),
@@ -169,7 +168,6 @@ class _OfflineMapState extends State<OfflineMap> {
                   markerColor = Colors.orangeAccent;
                   break;
                 case GeofenceType.pothole:
-                default:
                   markerIcon = Icons.warning_amber_rounded;
                   markerColor = Colors.redAccent;
                   break;
@@ -183,12 +181,12 @@ class _OfflineMapState extends State<OfflineMap> {
                   onTap: () => widget.onPointTapped(point),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[900]?.withOpacity(0.92),
+                      color: Colors.grey[900]?.withValues(alpha: 0.92),
                       shape: BoxShape.circle,
                       border: Border.all(color: markerColor, width: 2.0),
                       boxShadow: [
                         BoxShadow(
-                          color: markerColor.withOpacity(0.5),
+                          color: markerColor.withValues(alpha: 0.5),
                           blurRadius: 8.0,
                           spreadRadius: 1.0,
                         ),

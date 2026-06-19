@@ -369,7 +369,7 @@ class _CameraReporterState extends State<CameraReporter> with WidgetsBindingObse
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withOpacity(0.15) : Colors.grey[900],
+          color: isSelected ? activeColor.withValues(alpha: 0.15) : Colors.grey[900],
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? activeColor : Colors.transparent,
@@ -420,7 +420,7 @@ class _CameraReporterState extends State<CameraReporter> with WidgetsBindingObse
           margin: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.grey[900]?.withOpacity(0.85),
+            color: Colors.grey[900]?.withValues(alpha: 0.85),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: Colors.white12),
           ),
