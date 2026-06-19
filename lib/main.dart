@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'features/safety/screens/main_shell.dart';
+import 'features/auth/screens/login_screen.dart';
 
 void main() {
   runApp(const CivicPulseApp());
@@ -15,7 +15,7 @@ class CivicPulseApp extends StatelessWidget {
       title: 'GBV Safe Hub',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      home: const MainShell(),
+      home: const LoginScreen(),
     );
   }
 }
